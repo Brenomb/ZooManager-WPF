@@ -37,14 +37,6 @@ namespace ZooManager_WPF
             ShowAssociatedAnimals();
 
         }
-
-        private void ValidateEntry()
-        {
-            if (txtAddUpdate.Text == "")
-            {
-                MessageBox.Show("Please enter a value");
-            }
-        }
         private void ShowZoos()
         {
             try 
@@ -97,7 +89,7 @@ namespace ZooManager_WPF
                 }
             }catch(Exception e)
             {
-                MessageBox.Show(e.ToString());
+                // MessageBox.Show(e.ToString());
             }
 
         }
@@ -105,6 +97,12 @@ namespace ZooManager_WPF
         private void listZoos_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ShowAssociatedAnimals();
+            ShowSelectedZooInTextBox();
+        }
+
+        private void listAnimals_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ShowSelectedAnimalInTextBox();
         }
 
         private void ShowAnimals()
@@ -130,8 +128,8 @@ namespace ZooManager_WPF
         {
             try
             {
-                if(listZoos.SelectedValue == null)
-                    MessageBox.Show("Please select a zoo to delete");
+                if (listZoos.SelectedValue == null)
+                    MessageBox.Show("Please select a zoo to delete", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 string query = "DELETE FROM Zoo WHERE Id = @ZooID";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
@@ -141,12 +139,13 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                // MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
+                ShowAssociatedAnimals();
                 ShowZoos();
+                sqlConnection.Close();
             }
 
         }
@@ -155,7 +154,7 @@ namespace ZooManager_WPF
             try
             {
                 if (listAssociatedAnimals.SelectedValue == null)
-                    MessageBox.Show("Please select an animal to remove");
+                    MessageBox.Show("Please select an animal to remove", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 string query = "DELETE FROM ZooAnimal WHERE AnimalID = @AnimalID AND ZooID = @ZooID";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
@@ -166,40 +165,40 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
                 ShowAssociatedAnimals();
+                sqlConnection.Close();
             }
 
         }
         private void OnAddZoo_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtAddUpdate.Text))
+            try
             {
-                try
+                if (string.IsNullOrWhiteSpace(txtAddUpdate.Text))
                 {
-                    string query = "INSERT INTO Zoo VALUES (@Location)";
-                    SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
-                    sqlConnection.Open();
-                    sqlCommand.Parameters.AddWithValue("@Location", txtAddUpdate.Text);
-                    sqlCommand.ExecuteScalar();
+                    MessageBox.Show("Please enter a valid location for the zoo.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-                finally
-                {
-                    sqlConnection.Close();
-                    txtAddUpdate.Clear();
-                    ShowZoos();
-                }
-            }else
+
+                string query = "INSERT INTO Zoo VALUES (@Location)";
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+                sqlConnection.Open();
+                sqlCommand.Parameters.AddWithValue("@Location", txtAddUpdate.Text);
+                sqlCommand.ExecuteScalar();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("Please enter a value");
+                //MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                txtAddUpdate.Clear();
+                ShowZoos();
+                sqlConnection.Close();
             }
 
         }
@@ -207,7 +206,12 @@ namespace ZooManager_WPF
         {
             try 
             {
-                ValidateEntry();
+                if (string.IsNullOrWhiteSpace(txtAddUpdate.Text))
+                {
+                    MessageBox.Show("Please enter a valid name for the Animal.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
                 string query = "INSERT INTO Animal VALUES (@Name)";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
                 sqlConnection.Open();
@@ -216,13 +220,13 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
                 txtAddUpdate.Clear();
                 ShowAnimals();
+                sqlConnection.Close();
             }
 
         }
@@ -230,7 +234,9 @@ namespace ZooManager_WPF
         {
             try
             {
-                ValidateEntry();
+                if (listZoos.SelectedValue == null)
+                    MessageBox.Show("Please select a zoo to update", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+
                 string query = "UPDATE Zoo SET Location = @Location WHERE Id = @ZooID";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
                 sqlConnection.Open();
@@ -240,13 +246,13 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
                 txtAddUpdate.Clear();
                 ShowZoos();
+                sqlConnection.Close();
             }
 
         }
@@ -254,7 +260,9 @@ namespace ZooManager_WPF
         {
             try
             {
-                ValidateEntry();
+                if (listAnimals.SelectedValue == null)
+                    MessageBox.Show("Please select an animal to update", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+
                 string query = "UPDATE Animal SET Name = @Name WHERE Id = @AnimalID";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
                 sqlConnection.Open();
@@ -264,13 +272,13 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
                 txtAddUpdate.Clear();
                 ShowAnimals();
+                sqlConnection.Close();
             }
 
         }
@@ -279,7 +287,7 @@ namespace ZooManager_WPF
             try
             {
                 if (listAnimals.SelectedValue == null)
-                    MessageBox.Show("Please select an animal to delete");
+                    MessageBox.Show("Please select an animal to delete", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 string query = "DELETE FROM Animal WHERE Id = @AnimalID";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
@@ -289,12 +297,12 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
                 ShowAnimals();
+                sqlConnection.Close();
             }
 
         }
@@ -303,7 +311,7 @@ namespace ZooManager_WPF
             try
             {
                 if (listZoos.SelectedValue == null || listAnimals.SelectedValue == null)
-                    MessageBox.Show("Please select a zoo and an animal to add");
+                    MessageBox.Show("Please select a zoo and an animal to add", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 string query = "INSERT INTO ZooAnimal VALUES (@ZooID, @AnimalID)";
                 SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
@@ -314,12 +322,68 @@ namespace ZooManager_WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
             finally
             {
-                sqlConnection.Close();
                 ShowAssociatedAnimals();
+                sqlConnection.Close();
+            }
+        }
+
+        private void ShowSelectedAnimalInTextBox()
+        {
+            try
+            {
+                string query = "select name from Animal where Id = @AnimalId";
+
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+                // the SqlDataAdapter can be imagined like an Interface to make Tables usable by C#-Objects
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+
+                using (sqlDataAdapter)
+                {
+
+                    sqlCommand.Parameters.AddWithValue("@AnimalId", listAnimals.SelectedValue);
+
+                    DataTable zooDataTable = new DataTable();
+
+                    sqlDataAdapter.Fill(zooDataTable);
+
+                    txtAddUpdate.Text = zooDataTable.Rows[0]["Name"].ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                // MessageBox.Show(e.ToString());
+            }
+        }
+
+        private void ShowSelectedZooInTextBox()
+        {
+            try
+            {
+                string query = "select location from Zoo where Id = @ZooId";
+
+                SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+                // the SqlDataAdapter can be imagined like an Interface to make Tables usable by C#-Objects
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(sqlCommand);
+
+                using (sqlDataAdapter)
+                {
+
+                    sqlCommand.Parameters.AddWithValue("@ZooId", listZoos.SelectedValue);
+
+                    DataTable zooDataTable = new DataTable();
+
+                    sqlDataAdapter.Fill(zooDataTable);
+
+                    txtAddUpdate.Text = zooDataTable.Rows[0]["Location"].ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                // MessageBox.Show(e.ToString());
             }
         }
     }

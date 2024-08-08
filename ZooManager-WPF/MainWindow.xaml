@@ -12,7 +12,7 @@
 
         <ListBox x:Name="listZoos" SelectionMode="Extended" SelectionChanged="listZoos_SelectionChanged" HorizontalAlignment="Left" Height="175" Margin="10,45,0,0" VerticalAlignment="Top" Width="158"/>
         <ListBox x:Name="listAssociatedAnimals" SelectionMode="Extended" HorizontalAlignment="Left" Height="175" Margin="202,45,0,0" VerticalAlignment="Top" Width="158"/>
-        <ListBox x:Name="listAnimals" SelectionMode="Extended" HorizontalAlignment="Left" Height="299" Margin="396,45,0,0" VerticalAlignment="Top" Width="158"/>
+        <ListBox x:Name="listAnimals" SelectionMode="Extended" HorizontalAlignment="Left" Height="299" Margin="396,45,0,0" VerticalAlignment="Top" Width="158" SelectionChanged="listAnimals_SelectionChanged"/>
         
         <Button Content="Delete Zoo"        Click="OnDeleteZoo_Click"        HorizontalAlignment="Left" Margin="10,235,0,0" VerticalAlignment="Top" Width="158" Height="34"/>
         <Button Content="Remove Animal"     Click="OnRemoveAnimal_Click"     HorizontalAlignment="Left" Margin="202,235,0,0" VerticalAlignment="Top" Width="158" Height="34"/>
